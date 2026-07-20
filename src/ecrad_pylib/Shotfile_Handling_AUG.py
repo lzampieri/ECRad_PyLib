@@ -9,7 +9,7 @@ import os
 # sys.path.append('/afs/ipp/home/g/git/python/repository/py_rep2.0/')
 # import kk
 sys.path.append('/afs/ipp-garching.mpg.de/aug/ads-diags/common/python/lib')
-import dd
+import aug_sfutils as sf
 from scipy.signal import medfilt
 from scipy.interpolate import RectBivariateSpline, InterpolatedUnivariateSpline, UnivariateSpline, interp1d
 from ecrad_pylib.Equilibrium_Utils_AUG import EQData
@@ -30,12 +30,12 @@ def get_HEP_ne(shot, exp="AUGD", ed=0):
 def shotfile_exists(shot, diag):
     if(hasattr(diag, "diag")):
         try:
-            dd.shotfile(diagnostic=diag.diag, pulseNumber=shot, experiment=diag.exp, edition=diag.ed)
+            shf = sf.SFREAD(int(shot), diag.diag, exp=diag.exp, ed=diag.ed)
             return True
-        except dd.PyddError:
+        except:
             return False
     else:
-        return False
+        return bool( shf.status )
 
 def get_prof(shot, time, diag, sig, exp="AUGD", edition=0):
     DIAG = dd.shotfile(diag, int(shot), experiment=exp, edition=edition)

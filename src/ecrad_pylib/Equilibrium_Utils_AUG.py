@@ -6,8 +6,7 @@ Created on Jan 29, 2017
 import sys
 import os
 sys.path.append('/afs/ipp-garching.mpg.de/aug/ads-diags/common/python/lib')
-import dd
-from map_equ import equ_map
+import aug_sfutils as sf
 import numpy as np
 from scipy.interpolate import InterpolatedUnivariateSpline
 from ecrad_pylib.Equilibrium_Utils import EQDataExt, EQDataSlice
@@ -84,23 +83,14 @@ class EQData(EQDataExt):
         EQDataExt.__init__(self, external_folder, EQ_exp, EQ_diag, EQ_ed, Ext_data)        
 
     def init_read_from_shotfile(self):
-        self.equ = equ_map()
-        self.state = 0
-        if(not self.equ.Open(self.shot, diag=self.EQ_diag, exp=self.EQ_exp, ed=self.EQ_ed)):
+        self.equ = sf.EQU(self.shot, diag=self.EQ_diag, exp=self.EQ_exp, ed=self.EQ_ed)
+        self.state = self.equ.sf.status
+        if(not self.state):
             print("Failed to open shotfile")
             self.state = -1
             return
-        self.EQ_ed = self.equ.ed
-        if(self.EQ_diag == "EQH"):
-            self.GQH = dd.shotfile("GQH", int(self.shot), experiment=self.EQ_exp, edition=self.EQ_ed)
-            self.FPC = dd.shotfile("FPC", int(self.shot))
-        elif(self.EQ_diag == "IDE"):
-            self.GQH = dd.shotfile("IDG", int(self.shot), experiment=self.EQ_exp, edition=self.EQ_ed)
-            self.IDF = dd.shotfile("IDF", int(self.shot), experiment=self.EQ_exp, edition=self.EQ_ed)
-            self.FPC = None
-        else:
-            print("EQ diagnostic {0:s} not supported - only EQH and IDE are currently supported!".format(self.EQ_diag))
-        self.MBI_shot = dd.shotfile('MBI', int(self.shot))
+        self.EQ_ed = self.equ.sf.ed
+        self.MBI_shot = sf.SFREAD('MBI', int(self.shot))
         self.equ.read_scalars()
         self.shotfile_ready = True
 
