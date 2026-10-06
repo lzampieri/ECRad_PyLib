@@ -1256,6 +1256,7 @@ def load_IDA_data(shot, timepoints=None, exp="AUGD", ed=0, double_entries_allowe
     rhot_available=True
     try:
         IDA_rhot_mat = IDA.getobject("rhot")
+        assert IDA_rhot_mat is not None
     except Exception as e:
         rhot_available=False
         print("No rho toroIDAl profile in IDA shotfile")

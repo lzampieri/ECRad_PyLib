@@ -8,6 +8,7 @@ from ecrad_pylib.Distribution_Classes import Distribution
 import numpy as np
 np.set_printoptions(threshold=10)
 import os
+import sys
 from ecrad_pylib.Global_Settings import globalsettings
 from scipy.io import loadmat
 from scipy import constants as cnst
@@ -613,7 +614,7 @@ class ECRadResults(dict):
                         var = rootgrp["Results"].createVariable(key + "_" + sub_key,dtype, tuple(self.shapes[sub_key]))
                     var[:] = self[key][sub_key]
             except Exception as e:
-                print(key, sub_key)
+                print(key, sub_key, file=sys.stderr)
                 raise e
         if(self.Config["Execution"]["extra_output"]):
             key = "ray"
@@ -624,6 +625,10 @@ class ECRadResults(dict):
                     continue
                 var = rootgrp["Results"].createVariable(key + "_" + sub_key,dtype, tuple(self.shapes[key]))
                 for i_time in range(self["dimensions"]["N_time"]):
+                     # Progress in saving: when saving many timepoints it can take up to hours, so
+                     # it is nice to have a progress indication that everything is flowing as expected.
+                     # In stderr so the GUI is free to be used
+                    print(".", end="", file=sys.stderr, flush=True)
                     for i_ch in range(self["dimensions"]["N_ch"]):
                         for i_mode in range(self["dimensions"]["N_mode"]):
                             for i_ray in range(self["dimensions"]["N_ray"]):
@@ -637,7 +642,7 @@ class ECRadResults(dict):
         rootgrp["Results"].ECRadGUI_git_tag = self["git"]["GUI"]
         rootgrp["Results"].ECRadPylib_git_tag = self["git"]["Pylib"]
         rootgrp.close()
-        print("Created " + filename)
+        print("Created " + filename, file=sys.stderr)
         
     def from_netcdf(self, filename):
         rootgrp = Dataset(filename, "r", format="NETCDF4")

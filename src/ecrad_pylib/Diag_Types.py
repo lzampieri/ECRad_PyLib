@@ -291,7 +291,7 @@ class EXT_diag(BasicDiag):  #  Makes no sense to inherit properties we do not wa
         self.N_ch = len(self.f)
         
     def set_from_csv(self, ray_launch_file):
-        data = pd.read_csv(ray_launch_file, sep="[\t;,\\ ]+",comment="#", index_col=False).to_dict(orient="list")
+        data = pd.read_csv(ray_launch_file, sep="[\t;,\\ ]+",comment="#", index_col=False, engine="python").to_dict(orient="list")
 
         # Frequency
         if( "f" in data.keys() ):
@@ -354,6 +354,13 @@ class EXT_diag(BasicDiag):  #  Makes no sense to inherit properties we do not wa
         else:
             self.width = self.f * 0 + 17.17e-2
             print("Warning: no beam width provided, using 17.17e-2 m as default")
+
+        # Polarization coefficient
+        if( "pol_coeff_X" in data.keys() ):
+            self.pol_coeff_X = np.array(data["pol_coeff_X"]).astype(float)
+        else:
+            self.pol_coeff_X = self.f * 0 - 1
+            print("Warning: no pol_coeff_X provided, using -1 as default")
 
         self.N_ch = len(self.f)
 

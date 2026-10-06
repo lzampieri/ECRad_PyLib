@@ -346,9 +346,8 @@ def get_ECE_launch_info(shot, diag):
                 raise ValueError
         wg_info = wg_dict[ECE_launch["waveguide"][ich]]
         ECE_launch["z"][ich] = (ECE_launch["R"][ich] - wg_info["R1"]) / wg_info["dRds"] * wg_info["dzds"] + wg_info["z1"]
-        ECE_launch["theta_pol"][ich] = np.rad2deg(np.arccos((wg_info["z2"] - ECE_launch["z"][ich]) / \
-                                                            np.sqrt((wg_info["R2"] - ECE_launch["R"][ich]) ** 2 + \
-                                                                    (wg_info["z2"] - ECE_launch["z"][ich]) ** 2)) - np.pi / 2.e0)
+        ECE_launch["theta_pol"][ich] = np.rad2deg(np.pi - np.arctan2(wg_info["z1"] - wg_info["z2"],
+                                                                     wg_info["R1"] - wg_info["R2"]))
     ECE_launch["phi"][:] += (8.5e0) * 22.5
     ECE_launch["dist_focus"][:] = 2.131
     ECE_launch["width"][:] = 17.17e-2
