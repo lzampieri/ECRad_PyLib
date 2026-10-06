@@ -73,7 +73,13 @@ def account_function_current_user():
 
 class GlobalSettings:
     def __init__(self):
-        self.AUG = True
+        self.AUG = False
+        try:
+            import aug_sfutils as sf
+            self.AUG = True  # True  -> Start with True, set it to false if we run into problems
+        except ImportError:
+            self.AUG = False
+            print("AUG utilities will not be loaded since aug libraries are not found in the current environment")
         self.root = os.path.expanduser("~/")
         self.ECRadRoot = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, os.pardir)
         self.ECRadCoreRoot = os.path.join(self.ECRadRoot, "ECRad_core/src/ecrad_core")
