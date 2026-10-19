@@ -577,7 +577,7 @@ class ECRadResults(dict):
             filename = os.path.join(dir, "ECRad_Results_{0:d}.nc".format(ed))
             return filename, 0
 
-    def to_netcdf(self, filename=None, scratch=False, ed=None):
+    def to_netcdf(self, filename=None, scratch=False, ed=None, skip_rays=False):
         if(filename is not None):
             rootgrp = Dataset(filename, "w", format="NETCDF4")
         else:
@@ -616,7 +616,7 @@ class ECRadResults(dict):
             except Exception as e:
                 print(key, sub_key, file=sys.stderr)
                 raise e
-        if(self.Config["Execution"]["extra_output"]):
+        if(self.Config["Execution"]["extra_output"] and not skip_rays):
             key = "ray"
             for sub_key in self.sub_keys["ray"]:
                 if(sub_key in self.failed_keys[key]):
