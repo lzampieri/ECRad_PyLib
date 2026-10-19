@@ -325,10 +325,10 @@ class EXT_diag(BasicDiag):  #  Makes no sense to inherit properties we do not wa
         # R, z, theta_pol, phi_tor
         self.R = R1 * 0 + 3.90
         self.z = ( self.R - R1 ) / ( R2 - R1 ) * ( z2 - z1 ) + z1
-        self.theta_pol = np.rad2deg( np.pi - np.arctan2( z2 - z1, R2 - R1 ))
+        self.theta_pol = np.rad2deg( np.arctan2( z2 - z1, R2 - R1 ))
         # Ensure that the LOS is always entering the plasma
-        self.theta_pol[(self.theta_pol > 90)*(self.theta_pol < 270)] = self.theta_pol[(self.theta_pol > 90)*(self.theta_pol < 270)] - 180
         self.theta_pol[self.theta_pol < 0] = self.theta_pol[self.theta_pol < 0] + 360
+        self.theta_pol[(self.theta_pol > 90)*(self.theta_pol < 270)] = self.theta_pol[(self.theta_pol > 90)*(self.theta_pol < 270)] - 180
         if( "phi_tor" in data.keys() ):
             self.phi_tor = np.rad2deg( np.array(data["phi_tor"]).astype(float) )
         else:
