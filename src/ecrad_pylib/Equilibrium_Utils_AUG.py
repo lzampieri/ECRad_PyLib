@@ -98,7 +98,8 @@ class EQData(EQDataExt):
     def ApplyBVacCorrectionToSlice(self, EQSlice):
         self.R0 = 1.65  # Point for which BTFABB is defined
         # Adapted from mod_eqi.f90 by R. Fischer
-        rv = 2.40
+        # Using high field side as reference (L. Zampieri, 2026)
+        rv = 1.00
         vz = 0.e0
         Bt_out = np.squeeze(self.equ.rz2brzt(np.array([rv]), np.array([vz]), \
                                   EQSlice.time))[2]
@@ -116,11 +117,12 @@ class EQData(EQDataExt):
             print("Could not find MBI data")
             Btok = Btf0_eq *  self.R0 / EQSlice.R
             Btf0 = Btf0_eq
-            for j in range(len(EQSlice.z)):
-                # plt.plot(pfm_dict["Ri"],B_t[j], label = "EQH B")
-                Btok_eq = Btf0_eq * self.R0 / EQSlice.R  # vacuum toroidal field from EQH
-                Bdia = EQSlice.B_t.T[j] - Btok_eq  # subtract vacuum toroidal field from equilibrium to obtain diamagnetic field
-                EQSlice.B_t.T[j] = Btok + Bdia  # add corrected vacuum toroidal field to be used
+
+        for j in range(len(EQSlice.z)):
+            # plt.plot(pfm_dict["Ri"],B_t[j], label = "EQH B")
+            Btok_eq = Btf0_eq * self.R0 / EQSlice.R  # vacuum toroidal field from EQH
+            Bdia = EQSlice.Bt.T[j] - Btok_eq  # subtract vacuum toroidal field from equilibrium to obtain diamagnetic field
+            EQSlice.Bt.T[j] = Btok + Bdia  # add corrected vacuum toroidal field to be used
     # #         print(Btf0)
     # #         print("Original magnetic field: {0:2.3f}".format(Btf0))
     # #         print("New magnetic field: {0:2.3f}".format(Btf0 * self.bt_vac_correction))
